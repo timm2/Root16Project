@@ -7,6 +7,6 @@ namespace IssueTrackerBackend.Services
         public Task<List<Issue>> GetIssuesAsync();
         public Task CreateIssueAsync(Issue issue);
         public Task<bool> UpdateIssueStatusAsync(int issueId, int newStatusId);
-        public Task<bool> AssignIssueAsync(int issueId, int assigneeId);
+        public Task<bool> AssignIssueAsync(int issueId, int? assigneeId);
     }
 }

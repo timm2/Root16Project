@@ -1,14 +1,17 @@
 
 import { useEffect, useState } from "react";
-import { getIssues, getStatuses } from "./services/api";
+import { getIssues, getStatuses, getUsers } from "./services/api";
 import IssueTable from "./components/IssueTable";
 import type { Issue } from "./types/Issue";
 import type { Status } from "./types/Status";
+import type { User } from "./types/User";
 
 function App() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
     const [statuses, setStatuses] = useState<Status[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
+
 
     useEffect(() => {
         const fetchIssues = async () => {
@@ -30,8 +33,18 @@ function App() {
           }
         }
 
+        const fetchUsers = async () => {
+          try {
+            const data = await getUsers();
+            setUsers(data);
+          } catch (error) {
+            console.error("Failed to fetch users:", error);
+          }
+        };
+
         fetchIssues();
         fetchStatuses();
+        fetchUsers();
     }, []);
 
     return (
@@ -41,7 +54,8 @@ function App() {
             {loading ? (
                 <p>Loading issues...</p>
             ) : (
-                <IssueTable issues={issues} statuses={statuses} />
+              <IssueTable issues={issues} statuses={statuses} users={users} />
+                
             )}
         </div>
     );

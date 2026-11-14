@@ -6,12 +6,8 @@ namespace IssueTrackerBackend.Services
 {
     public class IssueService(IssueTrackerContext dbContext) : IIssueService
     {
-        public async Task<bool> AssignIssueAsync(int issueId, int assigneeId)
+        public async Task<bool> AssignIssueAsync(int issueId, int? assigneeId)
         {
-            if (!dbContext.Users.Any(i => i.Id == assigneeId))
-            {
-                return false;
-            }
 
             var issue = await dbContext.Issues.Where(i => i.Id == issueId).FirstOrDefaultAsync();
             if (issue == null)
@@ -19,6 +15,10 @@ namespace IssueTrackerBackend.Services
                 return false;
             }
 
+            if (assigneeId != null && !dbContext.Users.Any(i => i.Id == assigneeId))
+            {
+                return false;
+            }
             issue.AssignedUserId = assigneeId;
             await dbContext.SaveChangesAsync();
             return true;

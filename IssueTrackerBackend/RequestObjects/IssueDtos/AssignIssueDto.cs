@@ -2,6 +2,6 @@
 {
     public class AssignIssueDto
     {
-        public int AssigneeId { get; set; }
+        public int? AssigneeId { get; set; }
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddDbContext<IssueTrackerContext>(options =>
 
 builder.Services.AddScoped<IIssueService, IssueService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<IUsersService, UserService>();
 
 builder.Services.AddCors(options =>
 {

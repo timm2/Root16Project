@@ -12,16 +12,18 @@ import {
 } from "@mui/material";
 
 import type { Issue } from "../types/Issue";
-import { updateIssueStatus, getIssues } from "../services/api";
+import { updateIssueStatus, getIssues, updateIssueAssignedUser } from "../services/api";
 import { useState } from "react";
 import type { Status } from "../types/Status";
+import type { User } from "../types/User";
 
 interface IssueTableProps {
     issues: Issue[];
     statuses: Status[];
+    users: User[];
 }
 
-function IssueTable({ issues, statuses }: IssueTableProps) {
+function IssueTable({ issues, statuses, users }: IssueTableProps) {
 
     const [currentIssues, setIssues] = useState<Issue[]>(issues);
 
@@ -36,6 +38,20 @@ function IssueTable({ issues, statuses }: IssueTableProps) {
             setIssues(updatedIssues);
         } catch (error) {
             console.error("Failed to update issue status:", error);
+        }
+    };
+
+    const handleAssigneeChange = async (
+        issueId: number,
+        assigneeId: number | null
+    ) => {
+        try {
+            await updateIssueAssignedUser(issueId, assigneeId);
+
+            const updatedIssues = await getIssues();
+            setIssues(updatedIssues);
+        } catch (error) {
+            console.error("Failed to update issue assignee:", error);
         }
     };
 
@@ -76,11 +92,27 @@ function IssueTable({ issues, statuses }: IssueTableProps) {
                                             {status.name}
                                         </MenuItem>
                                     ))}
-    </Select>
+                                </Select>
                             </TableCell>
 
                             <TableCell>
-                                {issue.assignedUser?.name ?? "Unassigned"}
+                                <Select
+                                    value={issue.assignedUser?.id ?? -1}
+                                    size="small"
+                                    onChange={(event) =>
+                                        handleAssigneeChange(
+                                            issue.id,
+                                            event.target.value === -1 ? null : Number(event.target.value)
+                                        )
+                                    }
+                                >
+                                    <MenuItem value={-1}>Unassigned</MenuItem>
+                                    {users.map((user) => (
+                                        <MenuItem key={user.id} value={user.id}>
+                                            {user.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
                             </TableCell>
                         </TableRow>
                     ))}
