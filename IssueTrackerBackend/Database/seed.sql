@@ -5,7 +5,8 @@ VALUES
     ('In Progress'),
     ('Blocked'),
     ('Completed'),
-    ('Cancelled');
+    ('Cancelled'),
+    ('Closed');
 
 -- Populate Users table
 INSERT INTO Users (Name, Email)

@@ -6,6 +6,7 @@ namespace IssueTrackerBackend.Services
 {
     public class IssueService(IssueTrackerContext dbContext) : IIssueService
     {
+        private const int CLOSED_STATUS_ID = 6;
         public async Task<bool> AssignIssueAsync(int issueId, int? assigneeId)
         {
 
@@ -33,6 +34,7 @@ namespace IssueTrackerBackend.Services
         public async Task<List<Issue>> GetIssuesAsync()
         {
             var issues = await dbContext.Issues
+                .Where(i => i.StatusId != CLOSED_STATUS_ID)
                 .Include(i => i.Status)
                 .Include(i => i.AssignedUser)
                 .ToListAsync();
