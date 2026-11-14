@@ -15,7 +15,25 @@ namespace IssueTrackerBackend.Controllers
         public async Task<IActionResult> GetIssues()
         {
             var issues = await issueService.GetIssuesAsync();
-            return Ok(issues);
+            return Ok(issues.Select(issue => new
+            {
+                issue.Id,
+                issue.Title,
+                issue.Description,
+                issue.StatusId,
+                issue.AssignedUserId,
+                issue.CreatedAt,
+                Status = new
+                {
+                    issue.Status.Id,
+                    issue.Status.Name
+                },
+                AssignedUser = new
+                {
+                    issue.AssignedUser?.Id,
+                    issue.AssignedUser?.Name,
+                }
+            }));
         }
 
         [HttpPost]

@@ -32,7 +32,10 @@ namespace IssueTrackerBackend.Services
 
         public async Task<List<Issue>> GetIssuesAsync()
         {
-            var issues = await dbContext.Issues.ToListAsync();
+            var issues = await dbContext.Issues
+                .Include(i => i.Status)
+                .Include(i => i.AssignedUser)
+                .ToListAsync();
             return issues;
         }
 
