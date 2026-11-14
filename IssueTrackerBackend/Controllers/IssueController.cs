@@ -1,6 +1,6 @@
 ﻿using IssueTrackerBackend.DatabaseContext;
 using IssueTrackerBackend.Models;
-using IssueTrackerBackend.RequestObjects;
+using IssueTrackerBackend.RequestObjects.IssueDtos;
 using IssueTrackerBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

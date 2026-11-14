@@ -17,6 +17,7 @@ builder.Services.AddDbContext<IssueTrackerContext>(options =>
 );
 
 builder.Services.AddScoped<IIssueService, IssueService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
 
 var app = builder.Build();
 

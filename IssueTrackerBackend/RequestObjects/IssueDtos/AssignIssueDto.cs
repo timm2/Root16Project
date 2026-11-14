@@ -1,4 +1,4 @@
-﻿namespace IssueTrackerBackend.RequestObjects
+﻿namespace IssueTrackerBackend.RequestObjects.IssueDtos
 {
     public class AssignIssueDto
     {
