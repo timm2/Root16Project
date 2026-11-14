@@ -19,6 +19,16 @@ builder.Services.AddDbContext<IssueTrackerContext>(options =>
 builder.Services.AddScoped<IIssueService, IssueService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,6 +41,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseCors("ReactFrontend");
 app.MapControllers();
 
 app.Run();
