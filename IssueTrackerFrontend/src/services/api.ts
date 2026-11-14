@@ -27,6 +27,15 @@ export const updateIssueStatus = async (
     );
 };
 
+export const createIssue = async (issue: {
+    title: string;
+    description: string;
+    statusId: number;
+    assignedUserId: number | null;
+}) => {
+    await api.post("/issues", issue);
+};
+
 export const getUsers = async (): Promise<User[]> => {
     const response = await api.get<User[]>("/users");
     return response.data;

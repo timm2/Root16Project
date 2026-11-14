@@ -9,13 +9,17 @@ import {
     Paper,
     Select,
     MenuItem,
+    Box,
+    Button
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 import type { Issue } from "../types/Issue";
-import { updateIssueStatus, getIssues, updateIssueAssignedUser } from "../services/api";
+import { updateIssueStatus, getIssues, updateIssueAssignedUser, createIssue } from "../services/api";
 import { useState } from "react";
 import type { Status } from "../types/Status";
 import type { User } from "../types/User";
+import AddIssueDialog from "./AddIssueDialog";
 
 interface IssueTableProps {
     issues: Issue[];
@@ -26,6 +30,7 @@ interface IssueTableProps {
 function IssueTable({ issues, statuses, users }: IssueTableProps) {
 
     const [currentIssues, setIssues] = useState<Issue[]>(issues);
+    const [openAddIssue, setOpenAddIssue] = useState(false);
 
     const handleStatusChange = async (
     issueId: number,
@@ -55,8 +60,21 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
         }
     };
 
+    const handleAddIssue = async (issue: {
+        title: string;
+        description: string;
+        statusId: number;
+        assignedUserId: number | null;
+    }) => {
+        await createIssue(issue);
+
+        const updatedIssues = await getIssues();
+        setIssues(updatedIssues);
+    };
+
     return (
-        <TableContainer component={Paper}>
+        <>
+            <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -127,6 +145,23 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
                 </TableBody>
             </Table>
         </TableContainer>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setOpenAddIssue(true)}
+            >
+                Add Issue
+            </Button>
+        </Box>
+        <AddIssueDialog
+            open={openAddIssue}
+            statuses={statuses}
+            users={users}
+            onClose={() => setOpenAddIssue(false)}
+            onSubmit={handleAddIssue}
+        />
+        </>
     );
 }
 
