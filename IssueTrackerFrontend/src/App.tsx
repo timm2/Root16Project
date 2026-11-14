@@ -1,12 +1,14 @@
 
 import { useEffect, useState } from "react";
-import { getIssues } from "./services/api";
+import { getIssues, getStatuses } from "./services/api";
 import IssueTable from "./components/IssueTable";
 import type { Issue } from "./types/Issue";
+import type { Status } from "./types/Status";
 
 function App() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
+    const [statuses, setStatuses] = useState<Status[]>([]);
 
     useEffect(() => {
         const fetchIssues = async () => {
@@ -19,8 +21,17 @@ function App() {
                 setLoading(false);
             }
         };
+        const fetchStatuses = async () => {
+          try {
+            const data = await getStatuses();
+            setStatuses(data);
+          } catch (error) {
+            console.error("Failed to fetch statuses:", error);
+          }
+        }
 
         fetchIssues();
+        fetchStatuses();
     }, []);
 
     return (
@@ -30,7 +41,7 @@ function App() {
             {loading ? (
                 <p>Loading issues...</p>
             ) : (
-                <IssueTable issues={issues} />
+                <IssueTable issues={issues} statuses={statuses} />
             )}
         </div>
     );

@@ -7,29 +7,35 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Chip
+    Select,
+    MenuItem,
 } from "@mui/material";
 
 import type { Issue } from "../types/Issue";
+import { updateIssueStatus, getIssues } from "../services/api";
+import { useState } from "react";
+import type { Status } from "../types/Status";
 
 interface IssueTableProps {
     issues: Issue[];
+    statuses: Status[];
 }
 
-function IssueTable({ issues }: IssueTableProps) {
+function IssueTable({ issues, statuses }: IssueTableProps) {
 
-    const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "open":
-                return "info";
-            case "in progress":
-                return "warning";
-            case "blocked":
-                return "error";
-            case "completed":
-                return "success";
-            default:
-                return "default";
+    const [currentIssues, setIssues] = useState<Issue[]>(issues);
+
+    const handleStatusChange = async (
+    issueId: number,
+    statusId: number
+    ) => {
+        try {
+            await updateIssueStatus(issueId, statusId);
+
+            const updatedIssues = await getIssues();
+            setIssues(updatedIssues);
+        } catch (error) {
+            console.error("Failed to update issue status:", error);
         }
     };
 
@@ -46,7 +52,7 @@ function IssueTable({ issues }: IssueTableProps) {
                 </TableHead>
 
                 <TableBody>
-                    {issues.map((issue) => (
+                    {currentIssues.map((issue) => (
                         <TableRow key={issue.id}>
                             <TableCell>{issue.title}</TableCell>
 
@@ -55,13 +61,22 @@ function IssueTable({ issues }: IssueTableProps) {
                             </TableCell>
 
                             <TableCell>
-                                <Chip
-                                    label={issue.status?.name ?? "Unknown"}
-                                    color={getStatusColor(
-                                        issue.status?.name ?? ""
-                                    )}
+                                 <Select
+                                    value={issue.statusId}
                                     size="small"
-                                />
+                                    onChange={(event) =>
+                                        handleStatusChange(
+                                            issue.id,
+                                            Number(event.target.value)
+                                        )
+                                    }
+                                >
+                                    {statuses.map((status) => (
+                                        <MenuItem key={status.id} value={status.id}>
+                                            {status.name}
+                                        </MenuItem>
+                                    ))}
+    </Select>
                             </TableCell>
 
                             <TableCell>

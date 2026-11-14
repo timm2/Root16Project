@@ -15,3 +15,13 @@ export const getStatuses = async (): Promise<Status[]> => {
     const response = await api.get<Status[]>("/statuses");
     return response.data;
 };
+
+export const updateIssueStatus = async (
+    issueId: number,
+    statusId: number
+) => {
+    await api.put(
+        `/issues/${issueId}/update-status`,
+        { statusId }
+    );
+};

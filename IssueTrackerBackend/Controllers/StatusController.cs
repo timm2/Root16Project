@@ -14,20 +14,7 @@ namespace IssueTrackerBackend.Controllers
         {
             var statuses = await statusService.GetStatusesAsync();
 
-            return Ok(statuses.Select(status => new
-            {
-                status.Id,
-                status.Name,
-                Issues = status.Issues.Select(issue => new
-                {
-                    issue.Id,
-                    issue.Title,
-                    issue.Description,
-                    issue.StatusId,
-                    issue.AssignedUserId,
-                    issue.CreatedAt
-                })
-            }));
+            return Ok(statuses);
         }
 
         [HttpPost]

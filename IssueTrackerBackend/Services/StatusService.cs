@@ -17,7 +17,6 @@ namespace IssueTrackerBackend.Services
             //var statuses = await dbContext.Statuses.ToListAsync();
             //return statuses;
             return await dbContext.Statuses
-                .Include(status => status.Issues)
                 .ToListAsync();
         }
 
