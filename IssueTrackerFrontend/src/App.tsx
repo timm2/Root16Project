@@ -20,8 +20,6 @@ function App() {
                 setIssues(data);
             } catch (error) {
                 console.error("Failed to fetch issues:", error);
-            } finally {
-                setLoading(false);
             }
         };
         const fetchStatuses = async () => {
@@ -42,9 +40,19 @@ function App() {
           }
         };
 
-        fetchIssues();
-        fetchStatuses();
-        fetchUsers();
+        const fetchData = async () => {
+          try {
+              await Promise.all([
+                  fetchIssues(),
+                  fetchStatuses(),
+                  fetchUsers(),
+              ]);
+          } finally {
+              setLoading(false);
+          }
+        };
+
+        void fetchData();
     }, []);
 
     return (

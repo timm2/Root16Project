@@ -15,11 +15,12 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 
 import type { Issue } from "../types/Issue";
-import { updateIssueStatus, getIssues, updateIssueAssignedUser, createIssue } from "../services/api";
+import { updateIssueStatus, getIssues, updateIssueAssignedUser, createIssue, createStatus } from "../services/api";
 import { useState } from "react";
 import type { Status } from "../types/Status";
 import type { User } from "../types/User";
 import AddIssueDialog from "./AddIssueDialog";
+import AddStatusDialog from "./AddStatusDialog";
 
 interface IssueTableProps {
     issues: Issue[];
@@ -30,7 +31,9 @@ interface IssueTableProps {
 function IssueTable({ issues, statuses, users }: IssueTableProps) {
 
     const [currentIssues, setIssues] = useState<Issue[]>(issues);
+    const [currentStatuses, setStatuses] = useState<Status[]>(statuses);
     const [openAddIssue, setOpenAddIssue] = useState(false);
+    const [openAddStatus, setOpenAddStatus] = useState(false);
 
     const handleStatusChange = async (
     issueId: number,
@@ -72,6 +75,11 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
         setIssues(updatedIssues);
     };
 
+    const handleAddStatus = async (statusName: string) => {
+        const status = await createStatus(statusName);
+        setStatuses((current) => [...current, status]);
+    };
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -105,7 +113,7 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
                                         )
                                     }
                                 >
-                                    {statuses.map((status) => (
+                                    {currentStatuses.map((status) => (
                                         <MenuItem key={status.id} value={status.id}>
                                             {status.name}
                                         </MenuItem>
@@ -145,7 +153,14 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
                 </TableBody>
             </Table>
         </TableContainer>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}>
+            <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={() => setOpenAddStatus(true)}
+            >
+                Add Status
+            </Button>
             <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -156,10 +171,15 @@ function IssueTable({ issues, statuses, users }: IssueTableProps) {
         </Box>
         <AddIssueDialog
             open={openAddIssue}
-            statuses={statuses}
+            statuses={currentStatuses}
             users={users}
             onClose={() => setOpenAddIssue(false)}
             onSubmit={handleAddIssue}
+        />
+        <AddStatusDialog
+            open={openAddStatus}
+            onClose={() => setOpenAddStatus(false)}
+            onSubmit={handleAddStatus}
         />
         </>
     );

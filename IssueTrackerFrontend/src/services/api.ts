@@ -17,6 +17,11 @@ export const getStatuses = async (): Promise<Status[]> => {
     return response.data;
 };
 
+export const createStatus = async (statusName: string): Promise<Status> => {
+    const response = await api.post<Status>("/statuses", { statusName });
+    return response.data;
+};
+
 export const updateIssueStatus = async (
     issueId: number,
     statusId: number
